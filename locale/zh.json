@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Cube_DSH_Free local search",
+    "description": "为 web_search 与 web_fetch 提供可切换的后端：官方 API、免费本地后端，或官方失败时自动回退本地。"
+  }
+}

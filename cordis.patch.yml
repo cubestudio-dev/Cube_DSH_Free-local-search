@@ -1,0 +1,24 @@
+# Cube_DSH_Free local search bundle patch.
+#
+# Two things happen here:
+#
+# 1. the plugin row mounts the Host half (which registers the composed
+#    providers) and carries the persisted mode;
+# 2. the `web` row is pointed at that one composed provider id.
+#
+# Pointing at a single id is a static composition choice, not the deprecated
+# "rotate the provider per call" trick: `web_search`/`web_fetch` always resolve
+# the same provider, and the official/local decision — including the automatic
+# fallback inside one call — happens inside that provider.
+#
+# `mode: auto` reproduces the previous fail-safe behaviour: official first, the
+# bundled free backend when official is unusable for that call.
+- insert:
+    - id: cube-dsh-free
+      name: 'cube-dsh-free'
+      config:
+        mode: auto
+- id: web
+  config:
+    searchProvider: cube-dsh-free
+    fetchProvider: cube-dsh-free

@@ -1,0 +1,27 @@
+# Dependencies and install artifacts
+node_modules/
+.pnpm-store/
+
+# Local verification scaffolding (this repo keeps no test fixtures in-tree)
+.verify/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and local environment
+*.log
+npm-debug.log*
+.env
+.env.*
+!.env.example
+
+# Never commit a credential, even by accident
+.credentials.yaml

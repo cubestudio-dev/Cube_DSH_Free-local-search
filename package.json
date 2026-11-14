@@ -1,0 +1,68 @@
+{
+  "name": "cube-dsh-free",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cube_DSH_Free local search — a three-way backend for DSH web_search / web_fetch: DeepSeek official, a bundled free local backend, or automatic fallback from official to local.",
+  "author": "cubestudio-dev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cubestudio-dev/Cube_DSH_Free-local-search.git"
+  },
+  "homepage": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search#readme",
+  "bugs": {
+    "url": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search/issues"
+  },
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "README.md",
+    "LICENSE",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "web-search",
+    "web-fetch",
+    "deepseek-harness",
+    "cordis",
+    "free"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5",
+    "@deepseek-ai/dsh-web": "0.2.1-rc.5",
+    "@deepseek-ai/schemastery": "~3.18.5"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-web": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": []
+    }
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Cube_DSH_Free local search",
+    "description": "Switches the backend behind web_search and web_fetch: the official API, a free local backend, or automatic fallback from official to local."
+  }
+}
