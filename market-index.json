@@ -1,0 +1,91 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Cube DSH Free",
+    "zh": "Cube DSH Free"
+  },
+  "description": {
+    "en": "A three-way backend for DSH web_search / web_fetch: DeepSeek official, a bundled free local backend that needs no API key, or automatic in-call fallback from official to local.",
+    "zh": "给 DSH 的 web_search / web_fetch 提供三选一后端：官方 API、无需密钥的免费本地后端，或官方失败时在同一次调用内自动回退本地。"
+  },
+  "metadata": {
+    "categories": {
+      "web": {
+        "title": {
+          "en": "Web & search",
+          "zh": "网页与搜索"
+        }
+      },
+      "tools": {
+        "title": {
+          "en": "Tools & capabilities",
+          "zh": "工具与能力"
+        }
+      }
+    },
+    "labels": {
+      "free": {
+        "title": {
+          "en": "No API key",
+          "zh": "免密钥"
+        }
+      },
+      "zh-cn": {
+        "title": {
+          "en": "Chinese docs",
+          "zh": "中文文档"
+        }
+      }
+    },
+    "sortKeys": {}
+  },
+  "plugins": [
+    {
+      "name": "cube-dsh-free",
+      "title": {
+        "en": "Cube_DSH_Free local search",
+        "zh": "Cube_DSH_Free 本地搜索"
+      },
+      "description": {
+        "en": "Switches the backend behind web_search and web_fetch. Official only, local only, or automatic: official first and, when official is unusable for that call (quota, auth, server error, timeout, zero results), the bundled free local backend in the same call. Local search reads public result pages and local fetch returns extracted article text instead of raw HTML. Tool names, parameters and result formats stay unchanged.",
+        "zh": "切换 web_search 与 web_fetch 的后端。官方 API、本地 API，或自动切换：先试官方，这一次不可用（配额、鉴权、服务端错误、超时、零结果）就在同一次调用内改用插件自带的免费本地后端。本地搜索读公开结果页，本地抓取返回抽好的正文而不是原始 HTML。模型侧工具名、参数与结果格式完全不变。"
+      },
+      "author": "cubestudio-dev",
+      "homepage": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search#readme",
+      "repository": {
+        "url": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search"
+      },
+      "metadata": {
+        "category": "web",
+        "keywords": [
+          "dsh-plugin",
+          "web-search",
+          "web-fetch",
+          "search",
+          "scraping",
+          "free",
+          "fallback"
+        ],
+        "labels": [
+          "free",
+          "zh-cn"
+        ],
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1763155238,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search",
+            "commit": "7dc79d8335271f1d5aa99ee790860ad1f761be46"
+          },
+          "engines": {
+            "dsh": "^0.2.1-rc.5"
+          }
+        }
+      ]
+    }
+  ]
+}
