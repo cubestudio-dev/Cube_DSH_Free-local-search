@@ -11,10 +11,24 @@
 
 ## 安装
 
-```bash
-# 在 DSH 里：设置 → 插件 → 添加插件 → 填入本仓库地址
-# 或把这个目录安装进当前 profile：
-#   plugin_manager → install_bundle → 目标填本目录绝对路径
+两种方式：从 DSH 的 Discover 装，或直接把本目录装进 profile。
+
+### 方式一：Discover（市场 index）
+
+本仓库自带 `market-index.json`（DSH plugin-market format 1，已用官方 `parseMarketIndex` 校验）。把它添加为 index 源即可在 Discover 里看到并安装：
+
+```
+https://cubestudio-dev.github.io/Cube_DSH_Free-local-search/market-index.json
+```
+
+入口：**设置 → 插件 → More（Experimental plugins）→ 开启 Custom plugin markets → Discover → 添加索引源**。
+
+> `github.io` 需要先在该仓库启用 GitHub Pages（Settings → Pages → Branch: `main` / `/`）。没有启用时该地址返回 404。`raw.githubusercontent.com` 与常见 CDN 在部分网络下不可达，所以 index 不内置这些地址。
+
+### 方式二：直接安装本目录
+
+```
+plugin_manager → install_bundle → 目标填本目录绝对路径
 ```
 
 安装后在「设置 → 网页搜索后端」切换模式，默认是 `auto`。
