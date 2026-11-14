@@ -14,7 +14,7 @@
 import { readFileSync } from 'node:fs'
 
 const INDEX_URL = 'https://cubestudio-dev.github.io/Cube_DSH_Free-local-search/market-index.json'
-const EXPECTED_COMMIT = '7dc79d8335271f1d5aa99ee790860ad1f761be46'
+// Pinned by market-index.json; the verifier asserts the URL serves the same commit.
 
 const failures = []
 const note = (ok, label, extra = '') => {
@@ -57,7 +57,20 @@ if (text !== undefined) {
       note(/^[0-9a-f]{40}$/.test(source?.commit ?? ''), 'commit is a 40-hex SHA')
       note(source?.url === 'https://github.com/cubestudio-dev/Cube_DSH_Free-local-search', 'source URL matches this repo')
       const spec = `git+${source?.url.endsWith('.git') ? source.url : `${source?.url}.git`}#${source?.commit}`
-      note(spec.includes(EXPECTED_COMMIT), 'install spec pins the published commit', spec.slice(0, 96))
+      note(spec.startsWith('git+https://github.com/cubestudio-dev/'), 'install spec targets this repo', spec.slice(0, 96))
+
+      // The pinned commit must be the one GitHub currently serves as main,
+      // otherwise the index installs an older snapshot than the repository.
+      try {
+        const head = await fetch('https://api.github.com/repos/cubestudio-dev/Cube_DSH_Free-local-search/commits/main', {
+          signal: AbortSignal.timeout(15000),
+          headers: { 'user-agent': 'cube-dsh-free', accept: 'application/vnd.github+json' },
+        })
+        const sha = (await head.json()).sha
+        note(source?.commit === sha, 'index pins the current main', `${String(source?.commit).slice(0, 7)} vs ${String(sha).slice(0, 7)}`)
+      } catch (error) {
+        note(false, 'index pins the current main', error.message)
+      }
     }
   }
 }
