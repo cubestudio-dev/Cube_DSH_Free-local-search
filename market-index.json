@@ -75,11 +75,11 @@
       "versions": [
         {
           "version": "1.0.0",
-          "publishTimestamp": 1763155238,
+          "publishTimestamp": 1794665377,
           "source": {
             "type": "git",
             "url": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search",
-            "commit": "7dc79d8335271f1d5aa99ee790860ad1f761be46"
+            "commit": "4d09c7ed463e88d68ee64661cb1bb5ee68e52dda"
           },
           "engines": {
             "dsh": "^0.2.1-rc.5"
