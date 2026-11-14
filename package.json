@@ -30,7 +30,8 @@
     "LICENSE",
     "cordis.patch.yml",
     "locale/*.json",
-    "icon.svg"
+    "icon.svg",
+    "market-index.json"
   ],
   "keywords": [
     "dsh",
@@ -63,6 +64,5 @@
       "immediately": true,
       "inject": []
     }
-  },
-  "license": "MIT"
+  }
 }
