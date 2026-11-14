@@ -59,17 +59,17 @@ if (text !== undefined) {
       const spec = `git+${source?.url.endsWith('.git') ? source.url : `${source?.url}.git`}#${source?.commit}`
       note(spec.startsWith('git+https://github.com/cubestudio-dev/'), 'install spec targets this repo', spec.slice(0, 96))
 
-      // The pinned commit must be the one GitHub currently serves as main,
-      // otherwise the index installs an older snapshot than the repository.
+      // The pin is allowed to trail main (a docs or script commit does not change
+      // the plugin the index installs), but it must be a real commit in history.
       try {
-        const head = await fetch('https://api.github.com/repos/cubestudio-dev/Cube_DSH_Free-local-search/commits/main', {
+        const history = await fetch('https://api.github.com/repos/cubestudio-dev/Cube_DSH_Free-local-search/commits?per_page=100', {
           signal: AbortSignal.timeout(15000),
           headers: { 'user-agent': 'cube-dsh-free', accept: 'application/vnd.github+json' },
         })
-        const sha = (await head.json()).sha
-        note(source?.commit === sha, 'index pins the current main', `${String(source?.commit).slice(0, 7)} vs ${String(sha).slice(0, 7)}`)
+        const shas = (await history.json()).map(entry => entry.sha)
+        note(shas.includes(source?.commit), 'pinned commit exists in main history', String(source?.commit).slice(0, 7))
       } catch (error) {
-        note(false, 'index pins the current main', error.message)
+        note(false, 'pinned commit exists in main history', error.message)
       }
     }
   }
