@@ -80,7 +80,17 @@ if (text !== undefined) {
 try {
   const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
   note(manifest.name === 'cube-dsh-free', 'local manifest name matches', manifest.name)
-  note(manifest.version === '1.0.0', 'local manifest version matches the index', manifest.version)
+  // The index lists versions newest-first; the manifest must match the newest,
+  // which is the one an install resolves to.
+  // Read the local index rather than the served one: this check is about the
+  // working copy matching what will be published, not about CDN freshness.
+  const localIndex = JSON.parse(readFileSync(new URL('../market-index.json', import.meta.url), 'utf8'))
+  const newestVersion = localIndex.plugins?.find(p => p.name === 'cube-dsh-free')?.versions?.[0]?.version
+  note(
+    manifest.version === newestVersion,
+    'local manifest version matches the newest index entry',
+    `manifest ${manifest.version} vs index ${newestVersion}`,
+  )
   note(manifest.dsh?.bundle?.patch !== undefined, 'local manifest declares a bundle patch')
 } catch (error) {
   note(false, 'local manifest readable', error.message)

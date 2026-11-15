@@ -47,8 +47,8 @@
         "zh": "Cube_DSH_Free 本地搜索"
       },
       "description": {
-        "en": "Switches the backend behind web_search and web_fetch. Official only, local only, or automatic: official first and, when official is unusable for that call (quota, auth, server error, timeout, zero results), the bundled free local backend in the same call. Local search reads public result pages and local fetch returns extracted article text instead of raw HTML. Tool names, parameters and result formats stay unchanged.",
-        "zh": "切换 web_search 与 web_fetch 的后端。官方 API、本地 API，或自动切换：先试官方，这一次不可用（配额、鉴权、服务端错误、超时、零结果）就在同一次调用内改用插件自带的免费本地后端。本地搜索读公开结果页，本地抓取返回抽好的正文而不是原始 HTML。模型侧工具名、参数与结果格式完全不变。"
+        "en": "Switches the backend behind web_search and web_fetch. Official only, local only, or automatic in-call fallback to the bundled free local backend. Supports per-source cookies with automatic engine recognition. Tool names, parameters and result formats stay unchanged.",
+        "zh": "切换 web_search 与 web_fetch 的后端。官方 API、本地 API，或自动切换：先试官方，这一次不可用就在同一次调用内改用插件自带的免费本地后端。支持按搜索源分别配置 Cookie，并自动识别粘贴的 Cookie 属于哪个引擎。工具名、参数与结果格式完全不变。"
       },
       "author": "cubestudio-dev",
       "homepage": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search#readme",
@@ -73,6 +73,18 @@
         "sortKeys": {}
       },
       "versions": [
+        {
+          "version": "1.1.0",
+          "publishTimestamp": 1794719621,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search",
+            "commit": "76874ebe5607b00db02eb8a323414c827ac8d0f0"
+          },
+          "engines": {
+            "dsh": "^0.2.1-rc.5"
+          }
+        },
         {
           "version": "1.0.0",
           "publishTimestamp": 1794665377,
