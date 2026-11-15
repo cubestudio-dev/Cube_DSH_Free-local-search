@@ -126,6 +126,14 @@ check('en has per-source copy', dictEn?.cookiePerSource !== undefined)
 check('both dictionaries define save', dictZh?.save !== undefined && dictEn?.save !== undefined)
 
 // Render with a snapshot shaped like the settings form's.
+/** Render SettingsPage directly, bypassing the slot wrapper's closed-over form. */
+function SettingsPageDirect({ form }) {
+  const wrapper = pageComponent({ t: key => dictZh[key] ?? key, form, locale: 'zh' })
+  // The wrapper is `props => h(SettingsPage, {...props, form})`; calling it yields
+  // that element, whose type is SettingsPage.
+  return wrapper.type({ t: key => dictZh[key] ?? key, form, locale: 'zh' })
+}
+
 /** Resolve wrapper components the shim does not render. */
 function renderFully(element) {
   let node = element
@@ -203,6 +211,119 @@ check(
   fakeForm.value.cookiesBySource.baidu === undefined,
   JSON.stringify(fakeForm.value.cookiesBySource),
 )
+
+// ── source management: enable / disable / priority / custom ────────────────
+let srcRows = []
+walk(tree, node => {
+  const name = typeof node.type === 'function' ? node.type.name : node.type
+  if (name === 'SourceRow') srcRows.push(node.props)
+})
+
+check('renders one row per source', srcRows.length === 5, 'got ' + srcRows.length)
+check(
+  'all five built-ins appear',
+  ['bing', '360', 'baidu', 'duckduckgo', 'sogou'].every(id => srcRows.some(r => r.row.id === id)),
+  srcRows.map(r => r.row.id).join(','),
+)
+
+// The fake form holds the shipped order, so every source starts enabled and its
+// rank equals its position.
+const ordered = srcRows.slice().sort((a, b) => (a.row?.rank ?? 0) - (b.row?.rank ?? 0))
+check('every source is enabled by default', srcRows.every(r => r.row.enabled))
+check('rank matches position', ordered[0].row?.id === 'bing' && ordered[0].enabledRank === 1, ordered[0].row?.id)
+check('enabled count reflects the list', srcRows[0].enabledCount === 5, String(srcRows[0].enabledCount))
+
+// ── disabling writes a shorter list, preserving the rest in order ──────────
+const baiduSrc = srcRows.find(r => r.row?.id === 'baidu')
+
+await baiduSrc.onToggle('baidu')
+check(
+  'disabling removes it from the order',
+  !fakeForm.value.localSources.includes('baidu'),
+  JSON.stringify(fakeForm.value.localSources),
+)
+check(
+  'the remaining order is preserved',
+  fakeForm.value.localSources.join(',') === 'bing,360,duckduckgo,sogou',
+  fakeForm.value.localSources.join(','),
+)
+
+// ── re-enabling appends, i.e. lowest priority ──────────────────────────────
+await baiduSrc.onToggle('baidu')
+// the handler is sync but returns void; let its promise settle
+await new Promise(resolve => setTimeout(resolve, 10))
+check(
+  're-enabling appends at the end',
+  fakeForm.value.localSources[fakeForm.value.localSources.length - 1] === 'baidu',
+  JSON.stringify(fakeForm.value.localSources),
+)
+
+// ── moving changes priority ────────────────────────────────────────────────
+const secondSrc = srcRows.find(r => r.row.id === '360')
+await secondSrc.onMove(-1)
+await new Promise(resolve => setTimeout(resolve, 10))
+check(
+  'moving up swaps with the previous source',
+  fakeForm.value.localSources.join(',') === '360,bing,duckduckgo,sogou,baidu',
+  fakeForm.value.localSources.join(','),
+)
+
+// ── the ends of the list are not movable ───────────────────────────────────
+const firstRow = srcRows.find(r => r.row.rank === 0)
+const lastRow = srcRows.find(r => r.row.rank === 4)
+check('the top source is rank 1', firstRow.enabledRank === 1)
+check('the bottom source is rank 5', lastRow.enabledRank === 5)
+
+// ── a custom source appears in the table and carries its own id ────────────
+const customForm = {
+  value: {
+    mode: 'auto',
+    cookieWarmUp: true,
+    cookieBrowser: 'none',
+    cookieHeader: '',
+    cookiesBySource: {},
+    localSources: ['bing', 'mysearch'],
+    customSources: [{ id: 'mysearch', label: '我的搜索', url: 'https://a.example.com/?q={query}' }],
+  },
+  writable: true,
+  getSnapshot() { return { status: 'ready', writable: true, value: this.value } },
+  subscribe() { return () => {} },
+  async set(field, value) { this.value = { ...this.value, [field]: value }; return true },
+}
+
+const withCustom = SettingsPageDirect({ form: customForm })
+const customRows = []
+walk(withCustom, node => {
+  const name = typeof node.type === 'function' ? node.type.name : node.type
+  if (name === 'SourceRow') customRows.push(node.props)
+})
+check('custom source gets its own row', customRows.length === 6, 'got ' + customRows.length)
+check('custom row is marked custom', customRows.find(r => r.row.id === 'mysearch')?.row.custom === true)
+check('custom row is ranked second', customRows.find(r => r.row.id === 'mysearch')?.enabledRank === 2)
+
+// ── removing a custom source drops it from order and declarations ──────────
+const customRow = customRows.find(r => r.row.id === 'mysearch')
+customRow.onRemove('mysearch')
+await new Promise(resolve => setTimeout(resolve, 10))
+check(
+  'removing drops the declaration',
+  !(customForm.value.customSources ?? []).some(entry => entry.id === 'mysearch'),
+  JSON.stringify(customForm.value.customSources),
+)
+check(
+  'removing drops it from the order',
+  !customForm.value.localSources.includes('mysearch'),
+  JSON.stringify(customForm.value.localSources),
+)
+
+// ── the custom-source form renders and validates ───────────────────────────
+const addTree = SettingsPageDirect({ form: fakeForm })
+let addButton
+walk(addTree, node => {
+  if (node.props?.className === 'cdf-cs-add') addButton = node
+})
+check('there is an add-source button', addButton !== undefined)
+check('the editor is hidden until asked for', !JSON.stringify(addTree).includes('cdf-cs-row'))
 
 console.log(failures === 0 ? '\n全部通过' : `\n${failures} 项失败`)
 process.exitCode = failures === 0 ? 0 : 1

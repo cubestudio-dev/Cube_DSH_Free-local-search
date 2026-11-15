@@ -60,6 +60,68 @@ plugin_manager → install_bundle → 目标填本目录绝对路径
 - 正文按字符上限在行边界截断，返回 `truncated`；附带相关链接。
 - 依赖 JS 渲染的页面抽不到正文时，以「确实无内容」失败并说明原因。
 
+## 搜索源管理
+
+内置五个源：必应、360、百度、DuckDuckGo、搜狗。设置页里可以**开关**和**排序**，也可以**添加自己的源**。
+
+### 开关与优先级
+
+这两件事由同一个字段决定：`localSources` 就是"启用的源，按优先级排列"。
+
+```yaml
+localSources: [bing, baidu, mysearch]   # 先试必应，再百度，最后自定义源
+```
+
+- **开** = 加进这个列表；**关** = 从列表移除。
+- **优先级** = 在列表里的位置。第一个返回结果的源生效，后面的不再请求。
+- 至少保留一个；全部关掉会让本地后端无处可搜，因此被阻止。
+- 关闭某个源不会删除它的 Cookie 或自定义声明，重新启用即可恢复。
+
+### 添加自定义源
+
+内置源的手写解析器不适合让用户复制，所以自定义源用**声明**而不是代码。一个声明描述"去哪个地址搜、结果块长什么样"：
+
+| 字段 | 必填 | 说明 |
+|---|---|---|
+| `id` | 是 | 唯一标识，同时用于按源配置 Cookie。不能与内置源重名。 |
+| `label` | 是 | 显示名称。 |
+| `url` | 是 | 搜索地址模板，**必须含 `{query}`**，可含 `{offset}`。 |
+| `result` | 否 | 结果块的选择器，默认 `div.result`。 |
+| `link` | 否 | 结果链接的选择器，默认 `a`。 |
+| `title` | 否 | 标题的选择器，默认 `a`。 |
+| `snippet` | 否 | 摘要的选择器，默认 `p`。 |
+| `offsetStart` | 否 | 首页的 offset 值，默认 `0`。 |
+| `offsetStep` | 否 | 每页 offset 增量，默认 `10`。 |
+| `hosts` | 否 | Cookie 域，逗号分隔；留空则从 `url` 推导。 |
+| `warmUp` | 否 | 搜索前访问的首页；留空则取 `url` 的 origin。 |
+
+选择器支持三种基本写法：`tag`、`tag.class`、`#id`。没有引入完整 CSS 引擎——结果页的标记结构用这三种就够，多一个依赖不划算。
+
+一个可用的例子（360）：
+
+```yaml
+customSources:
+  - id: my360
+    label: 我的 360
+    url: "https://www.so.com/s?q={query}&pn={offset}"
+    result: li.res-list
+    link: h3 a
+    title: h3
+    snippet: p.res-desc
+    offsetStart: 1
+    offsetStep: 1
+```
+
+### 为什么用声明而不是脚本
+
+插件配置保存在 profile 的 YAML 里，并从设置页编辑。如果允许在那里写 JavaScript，一次配置失误就变成了在宿主进程里执行任意代码。声明只能描述一个页面，不能执行任何东西。
+
+### 验证过的边界
+
+- 声明在写入前就校验（id 形状、URL 协议、`{query}` 必填、ID 重名与内置源冲突），错误显示在字段旁。
+- 自定义源会进入 Cookie 体系：`hosts` 推导正确时，分源 Cookie 与浏览器导入都能作用于它。
+- 选择器写错时，搜索会报"没有解析出结果"并指明是哪个源，而不是静默返回空列表。
+
 ## 会话 Cookie
 
 公开搜索源会按会话拦截匿名流量。插件因此自己维护 Cookie jar，并支持四种来源：
@@ -134,7 +196,8 @@ plugin_manager → install_bundle → 目标填本目录绝对路径
 | `mode` | `auto` | `official` / `local` / `auto` |
 | `officialSearchProvider` | `deepseek-official` | 官方搜索 provider id（或 `deepseek-search-api`） |
 | `officialFetchProvider` | `http` | 官方抓取 provider id（或 `deepseek-fetch-api`） |
-| `localSources` | 五个源 | 本地源顺序 |
+| `localSources` | 五个源 | 启用的源，按优先级排列（见「搜索源管理」） |
+| `customSources` | 空 | 自定义源声明（见「搜索源管理」） |
 | `localMaxPages` | 2 | 每源最多翻页数 |
 | `localTimeoutMs` / `localFetchTimeoutMs` | 15000 / 25000 | 请求超时 |
 | `localMaxBytes` | 3000000 | 响应字节上限 |
@@ -143,7 +206,8 @@ plugin_manager → install_bundle → 目标填本目录绝对路径
 | `keepNoise` | false | 保留导航/侧栏/页脚 |
 | `cookieWarmUp` | true | 搜索前先访问源首页拿会话 Cookie |
 | `cookieBrowser` | none | 从浏览器导入 Cookie（edge/chrome/chromium/brave） |
-| `cookieHeader` | 空 | 手工 Cookie 头 |
+| `cookieHeader` | 空 | 旧版单一 Cookie 头，只发给能识别出的源 |
+| `cookiesBySource` | 空 | 按源配置的 Cookie |
 
 ## 结构
 

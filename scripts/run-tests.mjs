@@ -19,6 +19,10 @@ const STUB = `export class Schema {
   step() { return this }
   min() { return this }
   max() { return this }
+  required() { return this }
+  hidden() { return this }
+  loose() { return this }
+  collapse() { return this }
 }
 const make = type => (...args) => {
   const schema = new Schema(type)
@@ -51,7 +55,11 @@ writeFileSync(`${PKG}/package.json`, JSON.stringify({
 writeFileSync(`${PKG}/lib/index.js`, STUB)
 
 try {
-  await import('./test-source-cookies.mjs')
+  for (const suite of process.argv.slice(2).length > 0
+    ? process.argv.slice(2)
+    : ['test-custom-sources.mjs', 'test-source-cookies.mjs']) {
+    await import(`./${suite}`)
+  }
 } finally {
   rmSync(PKG, { recursive: true, force: true })
   // Remove node_modules only if this run created it and nothing else is in it.

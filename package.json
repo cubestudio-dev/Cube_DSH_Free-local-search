@@ -1,9 +1,9 @@
 {
   "name": "cube-dsh-free",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
-  "description": "Free local search and fetch backend for DSH web_search / web_fetch: pick official, free local sources, or auto-fallback, with per-source cookie support.",
+  "description": "Free local search and fetch backend for DSH web_search / web_fetch: pick official, free local sources, or auto-fallback; per-source cookies and user-defined search sources.",
   "author": "cubestudio-dev",
   "license": "MIT",
   "repository": {
@@ -67,6 +67,7 @@
   },
   "scripts": {
     "verify:index": "node scripts/verify-market-index.mjs",
-    "test": "node scripts/run-tests.mjs && node scripts/test-live-cookies.mjs && node scripts/test-client.mjs"
+    "test": "node scripts/run-tests.mjs && node scripts/test-live-cookies.mjs && node scripts/test-client.mjs",
+    "test:live": "node --use-system-ca scripts/run-tests.mjs test-live-search.mjs test-live-custom.mjs"
   }
 }

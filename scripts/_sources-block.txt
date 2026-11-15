@@ -1,0 +1,67 @@
+        h('div', { className: 'cdf-group' },
+          h('p', { className: 'cdf-group-label' }, t('sources')),
+          h('p', { className: 'cdf-note' }, t('sourcesHint')),
+
+          // Priority order is the order of `localSources`: the first source that
+          // answers wins, so the list is the priority.
+          h('div', { className: 'cdf-src-list' },
+            table.map(row => h(SourceRow, {
+              key: row.id,
+              h,
+              row,
+              enabledCount,
+              enabledRank: row.enabled ? row.rank + 1 : 0,
+              disabled,
+              t,
+              onToggle: id => {
+                const next = row.enabled
+                  ? currentSources.filter(entry => entry !== id)
+                  : [...currentSources, id]
+                void writeSources(next)
+              },
+              onMove: delta => {
+                const order = currentSources.slice()
+                const from = order.indexOf(row.id)
+                const to = from + delta
+                if (from === -1 || to < 0 || to >= order.length) return
+                order.splice(to, 0, ...order.splice(from, 1))
+                void writeSources(order)
+              },
+              // Removing a declaration also drops it from the order, otherwise
+              // it would point at a source that no longer exists.
+              onRemove: id => {
+                void writeCustom(customDeclarations.filter(entry => entry.id !== id))
+                if (currentSources.includes(id)) {
+                  void writeSources(currentSources.filter(entry => entry !== id))
+                }
+              },
+            })),
+          ),
+
+          // ── custom sources ────────────────────────────────────────────────
+          h('div', { className: 'cdf-cs-head' },
+            h('p', { className: 'cdf-group-label' }, t('customSources')),
+            draft === undefined
+              ? h('button', {
+                type: 'button',
+                className: 'cdf-cs-add',
+                disabled,
+                onClick: () => setDraft({ id: '', label: '', url: '', offsetStart: '0', offsetStep: '10' }),
+              }, t('csAdd'))
+              : null,
+          ),
+          draft === undefined
+            ? null
+            : h(CustomSourceForm, {
+              h,
+              draft,
+              disabled,
+              onChange: patch => setDraft({ ...draft, ...patch }),
+              onSave: () => { void saveDraft() },
+              onCancel: () => setDraft(undefined),
+              t,
+            }),
+          customDeclarations.length === 0 && draft === undefined
+            ? h('p', { className: 'cdf-note' }, t('csEmpty'))
+            : null,
+        ),
