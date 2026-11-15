@@ -57,7 +57,7 @@ writeFileSync(`${PKG}/lib/index.js`, STUB)
 try {
   for (const suite of process.argv.slice(2).length > 0
     ? process.argv.slice(2)
-    : ['test-update-survival.mjs', 'test-field-survival.mjs', 'test-config-resilience.mjs', 'test-custom-sources.mjs', 'test-source-cookies.mjs']) {
+    : ['test-real-profile.mjs', 'test-update-survival.mjs', 'test-field-survival.mjs', 'test-config-resilience.mjs', 'test-custom-sources.mjs', 'test-source-cookies.mjs']) {
     await import(`./${suite}`)
   }
 } finally {
