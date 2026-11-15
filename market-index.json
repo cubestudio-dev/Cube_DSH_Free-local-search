@@ -79,7 +79,7 @@
           "source": {
             "type": "git",
             "url": "https://github.com/cubestudio-dev/Cube_DSH_Free-local-search",
-            "commit": "8f0131b827dddd4d2eede17f60224e14be8615ae"
+            "commit": "cb662886f7a5208272b4441cbd8d47747c217cd3"
           },
           "engines": {
             "dsh": "^0.2.1-rc.5"
