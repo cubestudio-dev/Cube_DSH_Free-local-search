@@ -1,9 +1,9 @@
 {
   "name": "cube-dsh-free",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "description": "Cube_DSH_Free local search — a three-way backend for DSH web_search / web_fetch: DeepSeek official, a bundled free local backend, or automatic fallback from official to local.",
+  "description": "Free local search and fetch backend for DSH web_search / web_fetch: pick official, free local sources, or auto-fallback, with per-source cookie support.",
   "author": "cubestudio-dev",
   "license": "MIT",
   "repository": {
@@ -44,7 +44,7 @@
   ],
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.0.5",
-    "@deepseek-ai/dsh-web": "0.2.1-rc.5",
+    "@deepseek-ai/dsh-web": "0.2.1-rc.5 || >=0.2.2-rc.0 <0.3.0-0",
     "@deepseek-ai/schemastery": "~3.18.5"
   },
   "peerDependenciesMeta": {
@@ -66,6 +66,7 @@
     }
   },
   "scripts": {
-    "verify:index": "node scripts/verify-market-index.mjs"
+    "verify:index": "node scripts/verify-market-index.mjs",
+    "test": "node scripts/run-tests.mjs && node scripts/test-live-cookies.mjs && node scripts/test-client.mjs"
   }
 }

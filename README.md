@@ -62,15 +62,36 @@ plugin_manager → install_bundle → 目标填本目录绝对路径
 
 ## 会话 Cookie
 
-公开搜索源会按会话拦截匿名流量。插件因此自己维护一个每次调用独立的 Cookie jar，并支持三种来源：
+公开搜索源会按会话拦截匿名流量。插件因此自己维护 Cookie jar，并支持四种来源：
 
 | 字段 | 默认 | 说明 |
 |---|---|---|
+| `cookiesBySource` | 空 | **按源分别为每个搜索引擎配一份 Cookie。** 键是源 id（`bing` / `360` / `baidu` / `duckduckgo` / `sogou`）。设置页里每个源一行输入框，粘贴即可。 |
 | `cookieWarmUp` | true | 每源搜索前先访问一次它的首页，拿到会话 Cookie 再搜索，让请求像一次浏览会话而不是冷启动的机器人。 |
 | `cookieBrowser` | none | 从已安装浏览器（edge / chrome / chromium / brave）导入这些搜索域名的 Cookie，只读、仅内存、不落盘。 |
-| `cookieHeader` | 空 | 手工粘贴 `BAIDUID=…; MUID=…` 形式的 Cookie 头。 |
+| `cookieHeader` | 空 | 旧版的单一 Cookie 头，保留作兜底：它只会发给能识别出的那个源，不会广播给所有源。 |
 
-**Cookie 确实会发到服务端**：已用 httpbin 回显验证，`Cookie: CUBE_PROBE=yes-123` 出现在请求头里。
+### 为什么按源分开
+
+一个 Cookie 头只对一个域名有意义。把百度的 `BAIDUID` 发给必应，轻则被忽略，重则被判定为伪造会话。各家依赖的名字也不同：
+
+| 源 | 特征 Cookie 名 |
+|---|---|
+| 百度 | `BAIDUID` `BDUSS` `STOKEN` `PSTM` `ZFY` |
+| 搜狗 | `SUID` `SUV` `SNUID` `IPLOC` `PPUV` |
+| 必应 | `MUID` `_EDGE_S` `SRCHHPGUSR` `_U` |
+| 360 | `QiHooGUID` `QH_SESSION_ID` `__guid` |
+| DuckDuckGo | `vqd` `dcr` |
+
+### 自动识别来源
+
+设置页每个输入框会实时显示这段 Cookie 属于哪个引擎。粘贴到任意一格都行——插件按 Cookie 名判断归属并归位到对应的源。
+
+判据是上面的特征名，命中最多者胜。**两个源命中数相同时拒绝判定**，而不是猜：把会话挂到错误的域名上会产生一个「看起来已登录、其实没有」的请求，比不配置更糟。
+
+也接受从 DevTools 直接复制的 `Cookie: …` 整行，以及文本里带域名（如 `www.sogou.com`）的情况。
+
+**Cookie 确实会发到服务端**：已用 httpbin 回显验证，`Cookie: CUBE_PROBE=yes-123` 出现在请求头里；分源隔离也由测试覆盖——百度的 cookie 不会被发到必应的请求上。
 
 ### 关于「预热是否解决拦截」——修正说明
 
@@ -86,7 +107,7 @@ plugin_manager → install_bundle → 目标填本目录绝对路径
 - **新版 Chromium 的 Cookie 值用 v20（App-Bound）加密**，密钥只能由浏览器进程解开，**在浏览器外无法解密**。本机 Chrome 库即为此格式，插件如实报告而不伪造解密。
 - 只有旧的 `v10`/`v11` 格式可以通过 Windows DPAPI（系统自带 .NET 接口）解开。
 
-因此实践中 **`cookieWarmUp` 是默认开启的安全做法**（不需要碰浏览器，只是在搜索前多一次首页请求），`cookieHeader` 是导入不可用时的兜底。三者的共同作用是「让请求带上会话」，而不是「保证不被拦截」。
+因此实践中 **`cookieWarmUp` 是默认开启的安全做法**（不需要碰浏览器，只是在搜索前多一次首页请求），`cookiesBySource` 是手工配置时的首选，`cookieBrowser` 与 `cookieHeader` 是它的补充。
 
 ### 必应翻页
 

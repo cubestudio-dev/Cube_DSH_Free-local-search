@@ -63,6 +63,21 @@ window.__ModuleLoader__.load({
         cookieHeader: '手工 Cookie 头',
         cookieHeaderHint: '直接粘贴形如 BAIDUID=…; MUID=… 的内容。浏览器导入不可用时用这个。保存在 profile 配置里。',
         cookieCurrent: '当前',
+        cookiePerSource: '分源 Cookie',
+        cookiePerSourceHint: '每个搜索源用自己的一份 Cookie 去搜索。粘贴浏览器里该站点的 Cookie 即可（DevTools → Network → 请求头 → Cookie）。插件会识别这段 Cookie 属于哪个搜索引擎，识别结果实时显示。',
+        cookiePlaceholder: '把该网站的 Cookie 粘贴到这里',
+        cookieEmpty: '未填写',
+        cookieFilled: '已填写',
+        cookieDetected: '识别为',
+        cookieDetecting: '检测中…',
+        cookieUnknown: '识别不出来源，请确认粘贴的是哪个站的 Cookie',
+        cookieClear: '清空',
+        save: '保存',
+        cookieSaved: '已保存',
+        cookieSaving: '保存中…',
+        cookieRecognise: '自动识别',
+        cookiePasteAnywhere: '也可以粘贴到任意一格：插件会按 Cookie 名自动归位到对应的源。',
+        cookieSecurity: 'Cookie 会以明文保存在 profile 配置里，请勿提交到仓库或分享配置文件。',
         cookieOn: '已启用',
         cookieOff: '未启用',
         toolsNote: '模型侧的工具名、参数和结果格式都不变；本插件只是替换这两个工具背后的后端。',
@@ -98,6 +113,21 @@ window.__ModuleLoader__.load({
         cookieHeader: 'Paste a Cookie header',
         cookieHeaderHint: 'Paste something like BAIDUID=…; MUID=…. Use this when a browser import is impossible. Stored in the profile config.',
         cookieCurrent: 'Current',
+        cookiePerSource: 'Per-source cookies',
+        cookiePerSourceHint: 'Each search source searches with its own cookies. Paste what the browser sends for that site (DevTools → Network → request headers → Cookie). The plugin recognises which engine a header belongs to and shows the match as you type.',
+        cookiePlaceholder: "Paste this site's cookies here",
+        cookieEmpty: 'not set',
+        cookieFilled: 'set',
+        cookieDetected: 'recognised as',
+        cookieDetecting: 'checking…',
+        cookieUnknown: 'Could not tell which engine this belongs to',
+        cookieClear: 'Clear',
+        save: 'Save',
+        cookieSaved: 'Saved',
+        cookieSaving: 'Saving…',
+        cookieRecognise: 'Auto-detect',
+        cookiePasteAnywhere: 'You can also paste into any row: cookies are routed to the right source by name.',
+        cookieSecurity: 'Cookies are stored in plain text in the profile config. Do not commit it or share it.',
         cookieOn: 'on',
         cookieOff: 'off',
         toolsNote: 'Tool names, parameters, and result formats stay identical; this plugin only replaces the backend behind them.',
@@ -148,6 +178,46 @@ window.__ModuleLoader__.load({
 .cdf-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--dsw-alias-label-secondary); }
 .cdf-status-strong { color: var(--dsw-alias-label-primary); font-weight: 550; }
 .cdf-error { color: var(--dsw-alias-state-error-primary); }
+
+.cdf-cookies { display: flex; flex-direction: column; gap: 14px; margin: 4px 0 12px; }
+.cdf-cookie-row {
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--dsw-alias-bg-l2, transparent);
+}
+.cdf-cookie-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.cdf-cookie-name { font-weight: 600; font-size: 13px; }
+.cdf-cookie-state {
+  font-size: 11px; padding: 2px 8px; border-radius: 999px;
+  color: var(--dsw-alias-text-l3); border: 1px solid var(--dsw-alias-border-l1);
+}
+.cdf-cookie-set { color: var(--dsw-alias-text-ok, #3fbf8f); border-color: currentColor; }
+.cdf-cookie-hint { font-size: 11px; color: var(--dsw-alias-text-l3); }
+.cdf-cookie-ok { color: #3fbf8f; }
+.cdf-cookie-warn { color: #e8b53f; }
+.cdf-cookie-input-row { display: flex; gap: 10px; align-items: flex-start; }
+.cdf-cookie-input {
+  flex: 1; min-width: 0;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px; line-height: 1.45;
+  padding: 8px 10px; border-radius: 8px; resize: vertical;
+  color: var(--dsw-alias-text-l1);
+  background: var(--dsw-alias-bg-l1, transparent);
+  border: 1px solid var(--dsw-alias-border-l1);
+}
+.cdf-cookie-input:focus { outline: none; border-color: var(--dsw-alias-brand-primary, #e8b53f); }
+.cdf-cookie-actions { display: flex; flex-direction: column; gap: 6px; }
+.cdf-cookie-save, .cdf-cookie-clear {
+  font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--dsw-alias-border-l1);
+  background: transparent; color: var(--dsw-alias-text-l2);
+  white-space: nowrap;
+}
+.cdf-cookie-save { border-color: var(--dsw-alias-brand-primary, #e8b53f); color: var(--dsw-alias-brand-primary, #e8b53f); }
+.cdf-cookie-save:disabled, .cdf-cookie-clear:disabled { opacity: 0.4; cursor: not-allowed; }
+.cdf-cookie-save:not(:disabled):hover { background: rgba(232,181,63,0.12); }
+.cdf-cookie-clear:not(:disabled):hover { background: rgba(224,85,85,0.10); }
 .cdf-divider { height: 1px; background: var(--dsw-alias-border-l1); }
 .cdf-sources { display: flex; flex-wrap: wrap; gap: 6px; }
 .cdf-chip {
@@ -190,6 +260,17 @@ window.__ModuleLoader__.load({
         browser: ready && typeof snapshot.value?.cookieBrowser === 'string' ? snapshot.value.cookieBrowser : 'none',
         header: ready && typeof snapshot.value?.cookieHeader === 'string' ? snapshot.value.cookieHeader : '',
       }
+      // Per-source cookies: what the Host currently holds, keyed by source id.
+      const stored = (() => {
+        const raw = ready ? snapshot.value?.cookiesBySource : undefined
+        if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return {}
+        /** @type {Record<string, string>} */
+        const out = {}
+        for (const [key, value] of Object.entries(raw)) {
+          if (typeof value === 'string') out[key] = value
+        }
+        return out
+      })()
       const disabled = !ready || snapshot.writable === false || pending !== undefined
       const activeMode = MODES.find(entry => entry.id === mode)
       const groupRef = React.useRef(null)
@@ -287,22 +368,222 @@ window.__ModuleLoader__.load({
         ),
 
         // ── session cookies ────────────────────────────────────────────────
-        // Read-only summary: the values live in the Host config, and editing
-        // them here would duplicate the settings domain's own field editors.
+        // Editable per source. One row per engine, each writing its own field,
+        // so a session pasted for Baidu is never sent to Bing.
         h('div', { className: 'cdf-group' },
           h('p', { className: 'cdf-group-label' }, t('cookieTitle')),
           h('div', { className: 'cdf-sources' },
             h('span', { className: 'cdf-chip' }, `${t('cookieWarmUp')}：${cookie.warmUp ? t('cookieOn') : t('cookieOff')}`),
             h('span', { className: 'cdf-chip' }, `${t('cookieBrowser')}：${cookie.browser}`),
-            h('span', { className: 'cdf-chip' }, `${t('cookieHeader')}：${cookie.header === '' ? t('cookieOff') : t('cookieOn')}`),
           ),
+          h('p', { className: 'cdf-note' }, t('cookiePerSourceHint')),
+          h('div', { className: 'cdf-cookies' },
+            SOURCES.map(id => h(CookieRow, {
+              key: id,
+              React,
+              h,
+              id,
+              label: t(`source.${id}`),
+              value: stored[id] ?? '',
+              disabled,
+              t,
+              /**
+               * Persist one source's header. The whole map is written, because
+               * the form's `set` replaces a field wholesale rather than patching
+               * a nested path.
+               * @param {string} next - the new header for this source.
+               * @returns {Promise<void>} settlement after the write.
+               */
+              onSave: async next => {
+                const merged = { ...stored }
+                if (next.trim() === '') delete merged[id]
+                else merged[id] = next.trim()
+                try {
+                  const accepted = await form.set('cookiesBySource', merged)
+                  if (!accepted) setFailed(true)
+                } catch {
+                  setFailed(true)
+                }
+              },
+            })),
+          ),
+          h('p', { className: 'cdf-note' }, t('cookiePasteAnywhere')),
+          h('p', { className: 'cdf-note' }, t('cookieSecurity')),
           h('p', { className: 'cdf-note' }, t('cookieWarmUpHint')),
           h('p', { className: 'cdf-note' }, t('cookieBrowserHint')),
-          h('p', { className: 'cdf-note' }, t('cookieHeaderHint')),
         ),
 
         h('p', { className: 'cdf-note' }, t('toolsNote')),
       )
+    }
+
+
+    /**
+     * Cookie-name markers per source, mirrored from the Host's
+     * lib/source-cookies.js. Duplicated on purpose: the browser bundle is a
+     * hand-written ModuleLoader module and cannot import the Host's ES modules,
+     * so this is the one list that lives twice. Both copies are covered by
+     * scripts/test-source-cookies.mjs; keep them in step.
+     */
+    const MARKERS = {
+      baidu: ['BAIDUID', 'BAIDUID_BFESS', 'BDUSS', 'BDUSS_BFESS', 'STOKEN', 'PSTM', 'ZFY'],
+      sogou: ['SUID', 'SUV', 'SNUID', 'IPLOC', 'PPUV'],
+      bing: ['MUID', '_EDGE_S', '_EDGE_CD', 'SRCHHPGUSR', '_U'],
+      '360': ['QiHooGUID', 'QH_SESSION_ID', '__guid', 'count'],
+      duckduckgo: ['duckduckgo', 'vqd', 'dcr', 'ah'],
+    }
+
+    /**
+     * Recognise which engine a pasted Cookie header came from.
+     *
+     * Same rule as the Host: the source with the most marker names wins, and a
+     * tie is refused rather than guessed, because attributing a session to the
+     * wrong host produces a request that looks logged in and is not.
+     *
+     * @param {string} input - pasted text.
+     * @returns {{ source: string | undefined, names: string[] }} the verdict.
+     */
+    function recognise(input) {
+      const labelled = /^cookie\s*:\s*(.+)$/is.exec(input.trim())
+      const header = labelled === null ? input : labelled[1]
+      /** @type {string[]} */
+      const names = []
+      for (const chunk of header.split(';')) {
+        const i = chunk.indexOf('=')
+        if (i <= 0) continue
+        const name = chunk.slice(0, i).trim()
+        if (name !== '' && !names.includes(name)) names.push(name)
+      }
+      /** @type {Array<{ id: string, hits: number }>} */
+      const scored = []
+      for (const [id, markers] of Object.entries(MARKERS)) {
+        const hits = names.filter(name => markers.includes(name)).length
+        if (hits > 0) scored.push({ id, hits })
+      }
+      scored.sort((a, b) => b.hits - a.hits)
+      if (scored.length === 0) return { source: undefined, names }
+      if (scored[1] !== undefined && scored[1].hits === scored[0].hits) return { source: undefined, names }
+      return { source: scored[0].id, names }
+    }
+
+    /**
+     * One editable cookie row: a source's header, plus the recogniser's verdict.
+     *
+     * The verdict is the point of the row. Users cannot tell a Baidu session
+     * from a Bing one by looking, so the plugin says which engine a paste
+     * belongs to and refuses to attribute an ambiguous one.
+     *
+     * @param {object} props - row props.
+     * @param {any} props.React - React runtime.
+     * @param {any} props.h - createElement.
+     * @param {string} props.id - source id.
+     * @param {string} props.label - display name.
+     * @param {string} props.value - current header.
+     * @param {boolean} props.disabled - write blocked.
+     * @param {(next: string) => Promise<void>} props.onSave - persist.
+     * @param {(key: string) => string} props.t - translator.
+     * @returns {any} the row.
+     */
+    function CookieRow({ React, h, id, label, value, disabled, onSave, t }) {
+      const [draft, setDraft] = React.useState(value)
+      const [busy, setBusy] = React.useState(false)
+      const [saved, setSaved] = React.useState(false)
+      // Follow the Host when it changes underneath us (another surface wrote it).
+      React.useEffect(() => { setDraft(value) }, [value])
+
+      // Recognition runs on the draft, so the user sees the verdict before saving.
+      const verdict = React.useMemo(() => {
+        if (draft.trim() === '') return undefined
+        const result = recognise(draft)
+        return result
+      }, [draft])
+
+      const dirty = draft !== value
+      const canSave = dirty && !disabled && !busy
+
+      const commit = async () => {
+        if (!canSave) return
+        setBusy(true)
+        try {
+          await onSave(draft)
+          setSaved(true)
+          setTimeout(() => setSaved(false), 1600)
+        } finally {
+          setBusy(false)
+        }
+      }
+
+      // The verdict line: which engine, and whether it matches this row.
+      let hint = null
+      if (verdict !== undefined) {
+        const sourceId = verdict.source
+        const name = sourceId === undefined ? undefined : labelOfSource(sourceId)
+        if (sourceId === undefined) {
+          hint = h('span', { className: 'cdf-cookie-hint cdf-cookie-warn' }, t('cookieUnknown'))
+        } else if (sourceId === id) {
+          hint = h('span', { className: 'cdf-cookie-hint cdf-cookie-ok' },
+            t('cookieDetected') + ' ' + name + ' · ' + verdict.names.length + ' 项')
+        } else {
+          // A mismatch is allowed (the user may deliberately feed an auxiliary
+          // host), but it is stated, not silently accepted.
+          hint = h('span', { className: 'cdf-cookie-hint cdf-cookie-warn' },
+            t('cookieDetected') + ' ' + name + ' → ' + label)
+        }
+      }
+
+      return h('div', { className: 'cdf-cookie-row' },
+        h('div', { className: 'cdf-cookie-head' },
+          h('span', { className: 'cdf-cookie-name' }, label),
+          h('span', { className: value === '' ? 'cdf-cookie-state' : 'cdf-cookie-state cdf-cookie-set' },
+            value === '' ? t('cookieEmpty') : t('cookieFilled')),
+          hint,
+        ),
+        h('div', { className: 'cdf-cookie-input-row' },
+          h('textarea', {
+            className: 'cdf-cookie-input',
+            rows: 2,
+            spellCheck: false,
+            placeholder: t('cookiePlaceholder'),
+            value: draft,
+            disabled,
+            onChange: event => setDraft(event.target.value),
+            onKeyDown: event => {
+              // Cmd/Ctrl+Enter saves without leaving the field.
+              if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+                event.preventDefault()
+                void commit()
+              }
+            },
+          }),
+          h('div', { className: 'cdf-cookie-actions' },
+            h('button', {
+              type: 'button',
+              className: 'cdf-cookie-save',
+              disabled: !canSave,
+              onClick: () => { void commit() },
+            }, busy ? t('cookieSaving') : saved ? t('cookieSaved') : t('save')),
+            draft === '' ? null : h('button', {
+              type: 'button',
+              className: 'cdf-cookie-clear',
+              disabled: disabled || busy,
+              onClick: () => {
+                setDraft('')
+                void onSave('')
+              },
+            }, t('cookieClear')),
+          ),
+        ),
+      )
+    }
+
+    /**
+     * Display name for a source id, kept in the browser bundle so the verdict
+     * does not need a round trip.
+     * @param {string} id - source id.
+     * @returns {string} the label.
+     */
+    function labelOfSource(id) {
+      return { baidu: '百度', sogou: '搜狗', bing: '必应', '360': '360 搜索', duckduckgo: 'DuckDuckGo' }[id] ?? id
     }
 
     // ── plugin ──────────────────────────────────────────────────────────────
