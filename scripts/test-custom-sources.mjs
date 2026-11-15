@@ -107,29 +107,18 @@ const disabled = resolveConfig({ localSources: ['bing'], customSources: [good] }
 check('不在 localSources 里即为关闭', !disabled.localSources.includes('mysearch'))
 check('关闭后声明仍然保留', disabled.customSources.some(s => s.id === 'mysearch'))
 
-let rejectedUnknown = false
-try {
-  resolveConfig({ localSources: ['nosuchsource'], customSources: [] })
-} catch {
-  rejectedUnknown = true
-}
-check('引用未声明的自定义源会报错', rejectedUnknown)
+// The resolver degrades a bad field to its default and records why, rather than
+// throwing and losing every other field.
+const unknown = resolveConfig({ localSources: ['nosuchsource'], customSources: [] })
+check('引用未声明的自定义源被拒绝', unknown.problems.some(p => p.field === 'localSources'), JSON.stringify(unknown.problems))
+check('并被回落到默认源列表', unknown.localSources.length === 5)
 
-let rejectedEmpty = false
-try {
-  resolveConfig({ localSources: [], customSources: [good] })
-} catch {
-  rejectedEmpty = true
-}
-check('全部关闭会报错（需要至少一个源）', rejectedEmpty)
+const empty = resolveConfig({ localSources: [], customSources: [good] })
+check('全部关闭被拒绝', empty.problems.some(p => p.field === 'localSources'), JSON.stringify(empty.problems))
+check('并被回落到默认源列表', empty.localSources.length === 5)
 
-let rejectedDup = false
-try {
-  resolveConfig({ localSources: ['bing', 'bing'], customSources: [] })
-} catch {
-  rejectedDup = true
-}
-check('重复列出同一个源会报错', rejectedDup)
+const dup = resolveConfig({ localSources: ['bing', 'bing'], customSources: [] })
+check('重复列出同一个源被拒绝', dup.problems.some(p => p.field === 'localSources'), JSON.stringify(dup.problems))
 
 // priority is observable: the adapter map preserves insertion from localSources
 const map = customAdapters([spec])

@@ -49,6 +49,13 @@ function snapshot(config) {
     officialSearchProvider: field(config, 'officialSearchProvider'),
     officialFetchProvider: field(config, 'officialFetchProvider'),
     localSources: field(config, 'localSources'),
+    // These two are easy to forget here, and forgetting them is silent: the
+    // values exist in the config, resolveConfig fills defaults for the keys it
+    // is not given, and the plugin then searches with no cookies and no custom
+    // sources while the settings page still shows them stored. That is exactly
+    // what "my cookies vanished after the update" looked like.
+    customSources: field(config, 'customSources'),
+    cookiesBySource: field(config, 'cookiesBySource'),
     localMaxPages: field(config, 'localMaxPages'),
     localTimeoutMs: field(config, 'localTimeoutMs'),
     localFetchTimeoutMs: field(config, 'localFetchTimeoutMs'),

@@ -111,21 +111,23 @@ console.log('\n配置校验：')
 const resolved = resolveConfig({ cookiesBySource: { baidu }, localSources: sources })
 check('config 接受合法的 per-source cookie', resolved.cookiesBySource.baidu === baidu)
 
-let rejected = false
-try {
-  resolveConfig({ cookiesBySource: { notASource: 'a=1' } })
-} catch {
-  rejected = true
-}
-check('未知源 id 被拒绝', rejected)
+// A bad value is reported and fell back, not thrown: one bad cookie entry must
+// not cost the user every other setting.
+const unknownSource = resolveConfig({ cookiesBySource: { notASource: 'a=1' } })
+check(
+  '未知源 id 被拒绝',
+  unknownSource.problems.some(x => x.field === 'cookiesBySource'),
+  JSON.stringify(unknownSource.problems),
+)
+check('该字段回落到空', Object.keys(unknownSource.cookiesBySource).length === 0)
 
-let rejectedNewline = false
-try {
-  resolveConfig({ cookiesBySource: { baidu: 'BAIDUID=a\nb' } })
-} catch {
-  rejectedNewline = true
-}
-check('带换行的 cookie 被拒绝', rejectedNewline)
+const newline = resolveConfig({ cookiesBySource: { baidu: 'BAIDUID=a
+b' } })
+check(
+  '带换行的 cookie 被拒绝',
+  newline.problems.some(x => x.field === 'cookiesBySource'),
+  JSON.stringify(newline.problems),
+)
 
 check(
   '默认值是空对象',

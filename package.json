@@ -1,6 +1,6 @@
 {
   "name": "cube-dsh-free",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "type": "module",
   "description": "Free local search and fetch backend for DSH web_search / web_fetch: pick official, free local sources, or auto-fallback; per-source cookies and user-defined search sources.",

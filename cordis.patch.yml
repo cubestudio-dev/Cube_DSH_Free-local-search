@@ -2,8 +2,7 @@
 #
 # Two things happen here:
 #
-# 1. the plugin row mounts the Host half (which registers the composed
-#    providers) and carries the persisted mode;
+# 1. the plugin row mounts the Host half, which registers the composed providers;
 # 2. the `web` row is pointed at that one composed provider id.
 #
 # Pointing at a single id is a static composition choice, not the deprecated
@@ -11,13 +10,21 @@
 # the same provider, and the official/local decision — including the automatic
 # fallback inside one call — happens inside that provider.
 #
-# `mode: auto` reproduces the previous fail-safe behaviour: official first, the
-# bundled free backend when official is unusable for that call.
+# NO `config:` here, deliberately.
+#
+# This file belongs to the bundle, and the bundle is rewritten whenever the
+# plugin is installed or updated. A value written here is reseeded from the
+# package on every update, so any default set in this layer would silently
+# overwrite what the user chose in the settings page — which is exactly how the
+# mode used to snap back to `auto`, and why per-source cookies and the source
+# order appeared to vanish after an update.
+#
+# The defaults now live in the Config schema (lib/config.js) and the user's
+# values live in the profile patch, which the settings service owns. Nothing in
+# this layer competes with them.
 - insert:
     - id: cube-dsh-free
       name: 'cube-dsh-free'
-      config:
-        mode: auto
 - id: web
   config:
     searchProvider: cube-dsh-free
